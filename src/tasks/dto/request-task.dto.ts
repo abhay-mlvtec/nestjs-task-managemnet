@@ -5,8 +5,8 @@ export class RequestTaskDto {
     amount: number;
 
     @IsNotEmpty()
-    description:  string;
+    description: string;
 
     @IsNotEmpty()
-    requested_by:string
+    account_holder: string
 }

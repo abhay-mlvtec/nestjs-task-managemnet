@@ -24,5 +24,5 @@ export class Task {
     user: User;
 
     @Column()
-    requested_by: string;
+    account_holder: string;
 }

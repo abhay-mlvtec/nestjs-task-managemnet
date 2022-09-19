@@ -8,5 +8,5 @@ export class TransferTaskDto {
     description:  string;
 
     @IsNotEmpty()
-    requested_by:string
+    account_holder: string
 }

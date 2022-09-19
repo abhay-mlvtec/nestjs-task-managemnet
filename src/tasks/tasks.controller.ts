@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Injectable, Logger, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Injectable, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -10,13 +10,14 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskStatus } from './task-status.enum';
 import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
-
+import { Logger } from 'winston';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
 @Injectable()
 export class TasksController {
-   private logger = new Logger('TasksControllers'); 
+   @Inject('winston')
+   private readonly logger: Logger
    constructor(private tasksServices: TasksService, authService: AuthService){}
 
    @Get()
@@ -71,8 +72,8 @@ export class TasksController {
       @Body() requestTaskDto: RequestTaskDto,
       @GetUser() user:User,
    ): Promise<Task> {
-      this.logger.verbose(`user "${user.username}" tried to transfer amount.Data ${JSON.stringify(requestTaskDto)}`);
-      const task = this.tasksServices.requestTask(requestTaskDto, user);
+      //this.logger.verbose(`user "${user.username}" transfer amount.Data ${JSON.stringify(requestTaskDto)}`);
+      const task = this.tasksServices.transferTask(requestTaskDto, user);
       return task;
    }
 }

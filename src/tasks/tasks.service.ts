@@ -70,19 +70,25 @@ export class TasksService {
         const task = await  this.getTaskById(id, user);
         task.status = TaskStatus.DEPOSITED
 
-        const requested_by = task.requested_by;
+        const account_holder = task.account_holder;
 
         await this.tasksRepository.save(task);
 
-        const depositer_bal = {
-            amount: -task.amount,
-            description: 'Deposited as per request',
-            status: TaskStatus.DEBITED,
-            requested_by: task.requested_by,
-            user,
+        const verify_balance = this.tasksRepository.checkBalance(user);
+        //todo: check user exist before transfer
+        if(verify_balance['sum'] >= task.amount){
+            const depositer_bal = {
+                amount: -task.amount,
+                description: 'Deposited as per request',
+                status: TaskStatus.DEBITED,
+                account_holder: account_holder,
+                user,
+            }
+            this.tasksRepository.createTask(depositer_bal,user);
+            return task;
+        }else{
+            throw new Error('Account balance is not sufficient');
         }
-        this.tasksRepository.createTask(depositer_bal,user);
-        return task;
     }
 
     createTask(createTaskDto : CreateTaskDto, user: User): Promise<Task> {
@@ -94,6 +100,6 @@ export class TasksService {
     }
 
     transferTask(transferTaskDto : TransferTaskDto, user: User): Promise<Task> {
-        return this.tasksRepository.requestTask(transferTaskDto,user);
+        return this.tasksRepository.transferTask(transferTaskDto,user);
     }
 }

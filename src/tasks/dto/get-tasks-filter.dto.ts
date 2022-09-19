@@ -9,5 +9,5 @@ export class GetTasksFilterDto {
 
     @IsOptional()
     @IsString()
-    search?: string;
+    account_holder?: string;
 } 
